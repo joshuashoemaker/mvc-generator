@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MVC Generator</title>
+
+  <style>
+    button {
+      color: white;
+      background-color: rgb(75, 147, 255);
+      border: solid rgb(49, 139, 255) 1px;
+      border-radius: 4px;
+      padding: 6px 10px;
+      display: block;
+      margin: 10px 0px;
+    }
+
+    label {
+      display: block;
+      margin-top: 6px;
+    }
+
+    input {
+      display: block;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: rgb(250, 250, 250);
+      font-size: 16px;
+      padding: 6px 10px;
+      border: solid 1px rgb(196, 196, 196);
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+
+<body>
+  <label for="modelName"> Model Name</label>
+  <input id="modelName" />
+
+  <div id="propertyList">
+    <h4>Properties</h4>
+    <input class="propertyNameInput" />
+  </div>
+  <button onclick="addProperty()">Add Property</button>
+
+  <br />
+  <button onclick="submit()">Generate</button>
+</body>
+
+<script>
+  const vscode = acquireVsCodeApi()
+
+  function addProperty () {
+    const input = document.createElement('input')
+    input.setAttribute('class', 'propertyNameInput')
+    
+    const newPropertyElement = document.createElement('div')
+    newPropertyElement.appendChild(input)
+
+    const listElement = document.getElementById('propertyList')
+    listElement.appendChild(newPropertyElement)
+
+    input.focus()
+  }
+  
+  function submit() {
+    const inputs = document.querySelectorAll('.propertyNameInput') || []
+    const propertyNames = [...inputs].map(i => i.value)
+    
+    vscode.postMessage(
+      {
+        name: document.getElementById('modelName').value,
+        propertyNames: propertyNames
+      }
+    )
+  }
+</script>
+
+</html>
