@@ -19,6 +19,10 @@
 			{
 				"command": "mvc-generator.openForm",
 				"title": "MVC Generator: Open Form"
+			},
+			{
+				"command": "mvc-generator.openSettings",
+				"title": "MVC Generator: Settings"
 			}
 		]
 	},
@@ -42,5 +46,9 @@
 		"mocha": "^8.0.1",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.4.0"
+	},
+	"dependencies": {
+		"@types/uuid": "^8.3.0",
+		"uuid": "^8.3.1"
 	}
 }

@@ -1,10 +1,9 @@
 import * as vscode from 'vscode'
-import createModel from '../UseCases/createModel'
-import createModelTest from '../UseCases/createModelTest'
+import saveSettings from '../UseCases/saveSettings'
 
-class MVCForm {
-  public static currentPanel: MVCForm | undefined
-  public static readonly viewType = 'mvcForm'
+class MVCSettings {
+  public static currentPanel: MVCSettings | undefined
+  public static readonly viewType = 'MVCSettings'
   private readonly _panel: vscode.WebviewPanel
   private readonly _extentionUri: vscode.Uri
   private _disposables: vscode.Disposable[] = []
@@ -15,12 +14,12 @@ class MVCForm {
       ? vscode.window.activeTextEditor.viewColumn
       : undefined
     
-      if (MVCForm.currentPanel) {
-        MVCForm.currentPanel._panel.reveal(column)
+      if (MVCSettings.currentPanel) {
+        MVCSettings.currentPanel._panel.reveal(column)
       }
 
       const panel = vscode.window.createWebviewPanel(
-        MVCForm.viewType,
+        MVCSettings.viewType,
         'MVC Form',
         column || vscode.ViewColumn.One,
         {
@@ -29,11 +28,11 @@ class MVCForm {
         }
       )
 
-      MVCForm.currentPanel = new MVCForm(panel, extentionUri, context)
+      MVCSettings.currentPanel = new MVCSettings(panel, extentionUri, context)
   }
 
   public static revive (panel: vscode.WebviewPanel, extentionUri: vscode.Uri, context: vscode.ExtensionContext) {
-    MVCForm.currentPanel = new MVCForm(panel, extentionUri, context)
+    MVCSettings.currentPanel = new MVCSettings(panel, extentionUri, context)
   }
 
   private constructor (panel: vscode.WebviewPanel, extentionUri: vscode.Uri, context: vscode.ExtensionContext) {
@@ -54,7 +53,7 @@ class MVCForm {
   }
 
   public dispose () {
-    MVCForm.currentPanel = undefined
+    MVCSettings.currentPanel = undefined
     this._panel.dispose()
     
     while (this._disposables.length) {
@@ -66,11 +65,10 @@ class MVCForm {
   private _update () {
     const webview = this._panel.webview
     
-    this._panel.title = 'MVC Generator'
+    this._panel.title = 'MVC Settings'
     this._panel.webview.html = this._getHtmlForWebview(webview)
     this._panel.webview.onDidReceiveMessage((e: any) => {
-      createModel(e, this.context)
-      createModelTest(e, this.context)
+      saveSettings(e, this.context)
     },
     undefined,
     this._disposables
@@ -81,12 +79,12 @@ class MVCForm {
     return `
     <!DOCTYPE html>
     <html lang="en">
-    
+
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>MVC Generator</title>
-    
+      <title>MVC Settings</title>
+
       <style>
         button {
           color: white;
@@ -97,12 +95,12 @@ class MVCForm {
           display: block;
           margin: 10px 0px;
         }
-    
+
         label {
           display: block;
           margin-top: 6px;
         }
-    
+
         input {
           display: block;
           background-color: rgba(255, 255, 255, 0.1);
@@ -114,54 +112,35 @@ class MVCForm {
         }
       </style>
     </head>
-    
+
     <body>
-      <label for="modelName"> Model Name</label>
-      <input id="modelName" />
-    
-      <div id="propertyList">
-        <h4>Properties</h4>
-        <input class="propertyNameInput" />
-      </div>
-      <button onclick="addProperty()">Add Property</button>
-    
-      <br />
-      <button onclick="submit()">Generate</button>
+      <label for="modelsDirectory">Models Directory</label>
+      <input id="modelsDirectory" />
+
+      <label for="modelTestsDirectory">Model Tests Directory</label>
+      <input id="modelTestsDirectory" />
+
+
+      <button onclick="submit()">Save</button>
     </body>
-    
+
     <script>
       const vscode = acquireVsCodeApi()
-    
-      function addProperty () {
-        const input = document.createElement('input')
-        input.setAttribute('class', 'propertyNameInput')
-        
-        const newPropertyElement = document.createElement('div')
-        newPropertyElement.appendChild(input)
-    
-        const listElement = document.getElementById('propertyList')
-        listElement.appendChild(newPropertyElement)
-    
-        input.focus()
-      }
       
       function submit() {
-        const inputs = document.querySelectorAll('.propertyNameInput') || []
-        const propertyNames = [...inputs].map(i => i.value)
-        
         vscode.postMessage(
           {
-            name: document.getElementById('modelName').value,
-            propertyNames: propertyNames
+            modelsDirectory: document.getElementById('modelsDirectory').value,
+            modelTestsDirectory: document.getElementById('modelTestsDirectory').value
           }
         )
       }
     </script>
-    
+
     </html>
     `
   }
 }
 
-export default MVCForm
+export default MVCSettings
 

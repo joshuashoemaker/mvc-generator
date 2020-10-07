@@ -6,13 +6,17 @@ interface ModelInput {
   propertyNames: string[]
 }
 
-function createModel (model: ModelInput) {
-  console.log(model)
+function createModel (model: ModelInput, context: vscode.ExtensionContext) {
   const workspaceDirectory: string = vscode.workspace.rootPath || ''
 
-  const modelsDirectory = `${workspaceDirectory}/Models`
-  const doesModelsDirectoryExist = fs.existsSync(modelsDirectory)
-  if (!doesModelsDirectoryExist) fs.mkdirSync(modelsDirectory)
+  const modelsDirectory = `${workspaceDirectory}/${context.globalState.get('modelsDirectory')}`
+  try {
+    const doesModelsDirectoryExist = fs.existsSync(modelsDirectory)
+    if (!doesModelsDirectoryExist) fs.mkdirSync(modelsDirectory)
+  } catch {
+    vscode.window.showErrorMessage('Ensure path to Models directory exists and is set in Settings')
+    return
+  }
 
   const modelToCreateDirectory = `${modelsDirectory}/${model.name}`
   const doesMoodelToCreateDirectoryExist = fs.existsSync(modelToCreateDirectory)
@@ -21,7 +25,6 @@ function createModel (model: ModelInput) {
   const modelToCreateFilePath = `${modelToCreateDirectory}/${model.name}.js`
   const doesModelFileExist = fs.existsSync(modelToCreateFilePath)
   if (doesModelFileExist) {
-    vscode.window.showErrorMessage('Model Already Exists')
     return
   }
 
@@ -35,7 +38,8 @@ function createModel (model: ModelInput) {
   })
 
   const getterAndSetterMethods = model.propertyNames.map(p => {
-    return `get ${p} () {
+    return `
+    get ${p} () {
         return this._${p}
       }
     
@@ -43,7 +47,6 @@ function createModel (model: ModelInput) {
         this._${p} = value
         return this._${p}
       }
-
     `
   })
 
@@ -52,17 +55,31 @@ function createModel (model: ModelInput) {
     getterAndSetterMethodsAsString += m
   })
 
+  const propsGetterObject = model.propertyNames.map(p => {
+    return `\n${p}: this.${p},`
+  })
+  let propsGetterObjectAsString = ''
+  propsGetterObject.forEach(p => {
+    propsGetterObjectAsString += p
+  })
+
+
+
   const modelClassText = `class ${model.name} {
       constructor (props = {}) {${constructorAssignmentsAsString}
       }
-
       ${getterAndSetterMethodsAsString}
+      get props () {
+        return {${propsGetterObjectAsString}
+        }
+      }
     }
 
     export default ${model.name}
   `
 
   fs.writeFileSync(modelToCreateFilePath, modelClassText, 'utf-8')
+  vscode.window.showInformationMessage('Successfully Create Model')
 }
 
 export default createModel
