@@ -14,9 +14,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
-		"onCommand:mvc-generator.openForm",
-		"onCommand:mvc-generator.openSettings"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
