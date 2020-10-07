@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import MVCForm from './Views/MVCForm'
-import MVCSettings from './Views/MVCSettings';
+import MVCSettings from './Views/MVCSettings'
 
 export function activate(context: vscode.ExtensionContext) {
 	let openFormCommand = vscode.commands.registerCommand('mvc-generator.openForm', () => {

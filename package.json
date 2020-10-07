@@ -2,12 +2,11 @@
 	"name": "mvc-generator",
 	"displayName": "MVC JS Scaffolding Tool",
 	"description": "MVC JS Scaffolding Tool",
-	"type": "module",
 	"publisher": "Tzedakah",
 	"repository": "https://github.com/joshuashoemaker/mvc-generator",
 	"icon": "logo.png",
 	"preview": true,
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.49.0"
 	},
@@ -15,6 +14,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"*",
 		"onCommand:mvc-generator.openForm",
 		"onCommand:mvc-generator.openSettings"
 	],
