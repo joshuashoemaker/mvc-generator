@@ -2,6 +2,7 @@
 	"name": "mvc-generator",
 	"displayName": "mvc-generator",
 	"description": "MVC JS Scaffolding Tool",
+	"type": "module",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.49.0"
@@ -10,8 +11,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"*",
-		"onCommand:mvc-generator.openForm"
+		"onCommand:mvc-generator.openForm",
+		"onCommand:mvc-generator.openSettings"
 	],
 	"main": "./out/extension.js",
 	"contributes": {

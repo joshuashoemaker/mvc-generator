@@ -76,6 +76,8 @@ class MVCSettings {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
+    const modelsDirectory = this.context.globalState.get('modelsDirectory')
+    const modelTestsDirectory = this.context.globalState.get('modelTestsDirectory')
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -126,6 +128,9 @@ class MVCSettings {
 
     <script>
       const vscode = acquireVsCodeApi()
+
+      document.getElementById('modelsDirectory').value = '${modelsDirectory}'
+      document.getElementById('modelTestsDirectory').value = '${modelTestsDirectory}'
       
       function submit() {
         vscode.postMessage(
